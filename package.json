@@ -1,0 +1,20 @@
+{
+  "name": "tp2_bd1",
+  "version": "1.0.0",
+  "description": "Implementação de banco de dados postgreSQL de um sistema de uma universidade",
+  "homepage": "https://github.com/pedroasgDEV/TP2_BD1#readme",
+  "bugs": {
+    "url": "https://github.com/pedroasgDEV/TP2_BD1/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedroasgDEV/TP2_BD1.git"
+  },
+  "license": "ISC",
+  "author": "Pedro Augusto Sousa Goncalves",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
