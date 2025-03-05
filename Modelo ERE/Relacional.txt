@@ -8,30 +8,34 @@ Pessoa(_id_, codigo)
     Pessoa[codigo] ->B Curso[_codigo_]
 
 Aluno(_n_matricula_, nome, data_matricula, id)
-    Aluno[id] ->P Pessoa[_id_] 
+    Aluno[id] ->P Pessoa[_id_]
 telefone_aluno(_numero_, _n_matricula_)
     telefone_aluno[_n_matricula_] ->P Aluno[_n_matricula_]
 email_aluno(_email_, _n_matricula_)
-    email_aluno[_n_matricula_] ->P Aluno[_n_matricula_]
+    email_aluno[_n_matricula_] ->P Aluno[_n_matricula_] 
 
-Professor(_cpf_, nome, id)
-    Professor[id] ->P Pessoa[_id_]
+Professor(_cpf_, nome, data_inicio_contrato, id)
+    Professor[id] ->P Pessoa[_n_matricula_]
 telefone_professor(_numero_, _cpf_)
     telefone_professor[_cpf_] ->P Professor[_cpf_]
 email_professor(_email_, _cpf_)
     email_professor[_cpf_] ->P Professor[_cpf_]
-Professor_Substituto(_cpf_, data_inicio, data_fim)
+Professor_Substituto(_cpf_, data_fim_contrato)
     Professor_Substituto[_cpf_] ->P Professor[_cpf_]
 Professor_Titular(_cpf_)
     Professor_Titular[_cpf_] ->P Professor[_cpf_]
-areas_interesse(_area_, _cpf_)
-    areas_interesse[_cpf_] ->P Professor_Titular[_cpf_]
-Coordenador(_cpf_)
-    Coordenador[_cpf_] ->P Professor[_cpf_]
 
+Coordenador(_cpf_)
+    Coordenador[_cpf_] ->P Professor_Titular[_cpf_]
 coordena(_cpf_, _codigo_, data_inicio, data_fim)
     coordena[_cpf_] ->B Coordenador[_cpf_]
     coordena[_codigo_] ->B Curso[_codigo_]
+
+Area_Interesse(_id_, nome, descrição)
+area_do(_id_, _codigo_)
+    area_do[_codigo_] ->B Curso[_codigo_]
+se_interessa(_id_, _cpf_)
+    se_interessa[_cpf_] ->P Professor_Titular[_cpf_]
 
 Diciplina(_codigo_, nome, codigo_curso)
     Diciplina[codigo_curso] ->B Curso[_codigo_]
