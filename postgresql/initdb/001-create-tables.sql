@@ -1,6 +1,6 @@
 -- Entidade Curso
 CREATE TABLE IF NOT EXISTS Curso (
-    codigo INT NOT NULL AUTO_INCREMENT,
+    codigo SERIAL,
     nome VARCHAR(255) NOT NULL,
     CONSTRAINT PK_Curso PRIMARY KEY (codigo)
 );
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS email_curso (
 
 -- União Pessoa
 CREATE TABLE IF NOT EXISTS Pessoa (
-    ID INT NOT NULL AUTO_INCREMENT,
+    ID SERIAL,
     codigo INT NOT NULL,
     CONSTRAINT PK_Pessoa PRIMARY KEY (ID),
     CONSTRAINT FK_Pessoa FOREIGN KEY (codigo)
@@ -119,10 +119,10 @@ CREATE TABLE IF NOT EXISTS Coordenador (
 
 -- Entidade Area_Interesse
 CREATE TABLE IF NOT EXISTS Area_Interesse (
-    ID INT NOT NULL AUTO_INCREMENT,
+    ID SERIAL,
     nome VARCHAR(255) NOT NULL,
     descricao VARCHAR(500),
-    CONSTRAINT PK_Area_Interesse PRIMARY KEY (codigo)
+    CONSTRAINT PK_Area_Interesse PRIMARY KEY (ID)
 );
 
 -- Entidade Disciplina
@@ -137,15 +137,15 @@ CREATE TABLE IF NOT EXISTS Disciplina (
 
 -- Entidade Turma
 CREATE TABLE IF NOT EXISTS Turma (
-    ID INT NOT NULL AUTO_INCREMENT,
+    ID SERIAL,
     data_inicio DATE NOT NULL,
-    codigo INT NOT NULL,
+    codigo CHAR(6) NOT NULL,
     CPF CHAR(11) NULL,
     CONSTRAINT PK_Turma PRIMARY KEY (ID),
     CONSTRAINT FK_Turma_codigo FOREIGN KEY (codigo)
         REFERENCES Disciplina (codigo)
         ON DELETE CASCADE,
-    CONSTRAINT FK_Turma_codigo FOREIGN KEY (CPF)
+    CONSTRAINT FK_Turma_CPF FOREIGN KEY (CPF)
         REFERENCES Professor (CPF)
 );
 
