@@ -1,6 +1,6 @@
-from app.utils.connectDB import PostgreSQL
+from utils.connectDB import PostgreSQL
 
-class Admins:
+class Aluino:
     def __init__(self):
         #connect the database 
         self.__postgre = PostgreSQL()

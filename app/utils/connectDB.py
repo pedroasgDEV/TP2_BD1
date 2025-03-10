@@ -1,5 +1,5 @@
 import psycopg2
-from app.config import postgresql_config
+from config import postgresql_config
 
 class PostgreSQL:
     
@@ -27,7 +27,7 @@ class PostgreSQL:
         return self.__conn.cursor()
     
     #Execute a query and return if work
-    def execute(self, sql):
+    def execute(self, sql : str):
         try:
             cursor = self.__conn.cursor()
             cursor.execute(sql)
@@ -40,7 +40,7 @@ class PostgreSQL:
         return True
 
     #Consult some query and return the results of consult
-    def consult(self, sql):
+    def consult(self, sql : str):
         resp = None
         
         try:

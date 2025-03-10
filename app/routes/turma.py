@@ -1,6 +1,6 @@
 from app.utils.connectDB import PostgreSQL
 
-class AdmSub:
+class UsrSub:
     def __init__(self):
         #connect the database 
         self.__postgre = PostgreSQL()
@@ -15,7 +15,7 @@ class AdmSub:
             SELECT * 
             FROM information_schema.tables 
             WHERE table_schema = 'public' 
-            AND table_name = 'admin_subjects';
+            AND table_name = 'user_subjects';
         '''
         
         result = self.__postgre.consult(sql)
@@ -24,21 +24,21 @@ class AdmSub:
         else: return True
         
     #insert data from a json
-    def insert(self, admin_id, subject_code):
+    def insert(self, user_id, subject_code):
         sql = f'''
-            INSERT INTO admin_subjects 
-            (admin_id, subject_code)
+            INSERT INTO user_subjects 
+            (user_id, subject_code)
             VALUES 
-            ({admin_id}, '{subject_code}');
+            ('{user_id}', '{subject_code}');
         '''
         
         return self.__postgre.execute(sql)
         
     #Verify if the connection exists
-    def verify(self, admin_id, subject_code):
+    def verify(self, user_id, subject_code):
         sql = f'''
-            SELECT * FROM admin_subjects
-            WHERE admin_id = {admin_id}
+            SELECT * FROM user_subjects
+            WHERE user_id = '{user_id}'
             AND subject_code = '{subject_code}';
         '''
         
@@ -48,39 +48,39 @@ class AdmSub:
         else: return True
         
     #select all Admins
-    def select_all_admins(self, subject_code):
+    def select_all_users(self, subject_code):
         sql = f'''
             SELECT *
-            FROM admins adm
-            JOIN admin_subjects admsub ON adm.id = admsub.admin_id
-            WHERE admsub.subject_code = '{subject_code}';
+            FROM users usr
+            JOIN user_subjects usrsub ON usr.regis_id = usrsub.user_id
+            WHERE usrsub.subject_code = '{subject_code}';
         '''
         
         results = self.__postgre.consult(sql)
-        adms = []
+        usrs = []
         
         if results is None or len(results) < 1: return False
         else:
             for result in results:
-                adm = {
-                    "id": result[0],
+                usr = {
+                    "regis_id": result[0],
                     "name": result[1],
                     "email": result[2],
                     "passwrd": result[3],
-                    "derp": result[4]
+                    "course": result[4]
                 }
                 
-                adms.append(adm)
+                usrs.append(usr)
                 
-            return adms
+            return usrs
         
     #select all Subjects
-    def select_all_subjects(self, admin_id):
+    def select_all_subjects(self, user_id):
         sql = f'''
             SELECT *
             FROM subjects sub
-            JOIN admin_subjects admsub ON sub.subject_code = admsub.subject_code
-            WHERE admsub.admin_id = {admin_id};
+            JOIN user_subjects usrsub ON sub.subject_code = usrsub.subject_code
+            WHERE usrsub.user_id = '{user_id}';
         '''
         
         results = self.__postgre.consult(sql)
@@ -101,10 +101,10 @@ class AdmSub:
             return subs
     
     #delet data
-    def delete(self, admin_id, subject_code):
+    def delete(self, user_id, subject_code):
         sql = f'''
-            DELETE FROM admin_subjects
-            WHERE admin_id = {admin_id}
+            DELETE FROM user_subjects
+            WHERE user_id = '{user_id}'
             AND subject_code = '{subject_code}';
         '''
         

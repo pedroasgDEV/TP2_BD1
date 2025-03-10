@@ -1,0 +1,5 @@
+{
+    "nome": "Ciência de Dados",
+    "descricao": "A Ciência de Dados é um campo interdisciplinar que combina estatística, matemática, programação e conhecimento de domínio para extrair insights a partir de grandes volumes de dados. Envolve técnicas de análise de dados, aprendizado de máquina, visualização e processamento de dados para apoiar a tomada de decisões.",
+    "curso": [2, 3]
+}

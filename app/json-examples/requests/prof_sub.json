@@ -1,0 +1,12 @@
+{   
+    "CPF": "12121212121",
+    "nome": "Dr. Pedro Augusto",
+    "data_inicio_contrato": "2020-03-01",
+    "curso": 2,
+    "telefones": ["5538998107189"],
+    "emails": ["pedro.asg@ufop.edu.br"],
+    "especializa": {
+        "tipo": "substituto",
+        "data_fim_contrato": "2021-03-01"
+    }
+}

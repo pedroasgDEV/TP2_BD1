@@ -1,0 +1,14 @@
+O json do PUT é o mesmo que o POST para todos, contudo só
+é necessario colocar os atributos que sofreram alteração
+
+Qundo há listas, todo o conjunto anterior é excluido e o novo
+é adicionado
+
+OS seguintes atributos não podem ser alterados:
+Curso: codigo
+Aluno: n_matricula, ID
+Professor: CPF, ID
+Areas: ID
+Disciplina: codigo
+Turma: ID
+Avaliacao: ID, data_aplicacao

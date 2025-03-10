@@ -1,0 +1,19 @@
+{   
+    "aluno": {
+        "n_matricula": "21.1.4015",
+        "nome": "Pedro Augusto",
+        "data_matricula": "2021-02-01",
+        "curso": 2,
+        "media_notas": 6.5,
+        "tempo_curso_anos": 2,
+        "disciplinas_aprovadas": ["BCC002", "MAT003"],
+        "telefones": ["5538998107189"],
+        "emails": ["pedro.asg@aluno.ufop.edu.br"],
+        "horarios": [{
+            "codigo_disciplina": "BCC002",
+            "dia": 1,
+            "horario": 2,
+            "sala": 202
+        }]
+    }
+}

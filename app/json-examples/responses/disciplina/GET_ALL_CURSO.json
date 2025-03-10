@@ -1,0 +1,11 @@
+{   
+    "disciplina": {
+        "codigo": "BCC321",
+        "nome": "Banco de Dados 1",
+        "media_notas": 7.0,
+        "professores": [{
+            "CPF": "22222222222",
+            "nome": "Dra. Fernanda Costa"
+        }]
+    }
+}
