@@ -1,11 +1,4 @@
-.xml_convert/
-dist
-build
-*.spec
-*.txt
-*.vtk
-*.xml
-opencco-file-converter
+.tp2_bd1/
 
 # Byte-compiled / optimized / DLL files
 *.py[cod]
