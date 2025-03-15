@@ -1,6 +1,7 @@
 {   
     "aluno": [{
         "n_matricula": "21.1.4015",
+        "nome_curso": "Ciencia Da Computação",
         "nome": "Pedro Augusto",
         "data_matricula": "2021-02-01",
         "media_notas": 6.5,

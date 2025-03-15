@@ -1,6 +1,7 @@
 {   
     "professor": {
         "CPF": "12121212121",
+        "nome_curso": "Ciencia Da Computação",
         "nome": "Dr. Pedro Augusto",
         "data_inicio_contrato": "2020-03-01",
         "telefones": ["5538998107189"],

@@ -1,6 +1,7 @@
 {   
     "turma": [{
         "ID": 1,
+        "codigo_disciplina": "BCC002",
         "data_inicio": "C2024-01-15",
         "professor": {
             "CPF": "99999999999",
