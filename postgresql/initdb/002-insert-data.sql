@@ -1,5 +1,5 @@
 -- Inserção de Cursos
-INSERT INTO Curso (codigo, nome) VALUES 
+INSERT INTO curso (codigo, nome) VALUES 
 (1, 'Engenharia de Software'),
 (2, 'Ciência da Computação'),
 (3, 'Matemática');
@@ -15,13 +15,13 @@ INSERT INTO email_curso (email, codigo) VALUES
 ('ccomp@universidade.com', 2),
 ('mat@universidade.com', 3);
 
-INSERT INTO Pessoa (ID, codigo) VALUES
+INSERT INTO pessoa (id, codigo) VALUES
 (1, 1), (2, 2), (3, 3), (4, 1), (5, 2), (6, 3),
 (7, 1), (8, 2), (9, 3), (10, 1), (11, 2), (12, 3),
 (13, 1), (14, 2), (15, 3), (16, 1), (17, 2), (18, 3);
 
 -- Inserção de Alunos
-INSERT INTO Aluno (n_matricula, nome, data_matricula, ID) VALUES 
+INSERT INTO aluno (n_matricula, nome, data_matricula, id) VALUES 
 ('202300001', 'Alice Souza', '2023-02-15', 1),
 ('202300002', 'Bruno Lima', '2023-02-16', 2),
 ('202300003', 'Carla Mendes', '2023-02-17', 3),
@@ -56,7 +56,7 @@ INSERT INTO email_aluno (email, n_matricula) VALUES
 ('miguel@exemplo.com', '202300009');
 
 -- Inserção de Professores
-INSERT INTO Professor (CPF, nome, data_inicio_contrato, ID) VALUES 
+INSERT INTO professor (cpf, nome, data_inicio_contrato, id) VALUES 
 ('11111111111', 'Dr. Marcos Silva', '2020-03-01', 10),
 ('22222222222', 'Dra. Fernanda Costa', '2019-04-10', 11),
 ('33333333333', 'Dr. João Pereira', '2018-05-20', 12),
@@ -68,7 +68,7 @@ INSERT INTO Professor (CPF, nome, data_inicio_contrato, ID) VALUES
 ('99999999999', 'Dr. Luiz Henrrique', '2018-05-21', 18);
 
 -- Telefones e Emails dos Professores
-INSERT INTO telefone_professor (numero, CPF) VALUES 
+INSERT INTO telefone_professor (numero, cpf) VALUES 
 ('8888-0001', '11111111111'),
 ('8888-0002', '22222222222'),
 ('8888-0003', '33333333333'),
@@ -79,7 +79,7 @@ INSERT INTO telefone_professor (numero, CPF) VALUES
 ('8888-0008', '88888888888'),
 ('8888-0009', '99999999999');
 
-INSERT INTO email_professor (email, CPF) VALUES 
+INSERT INTO email_professor (email, cpf) VALUES 
 ('marcos@universidade.com', '11111111111'),
 ('fernanda@universidade.com', '22222222222'),
 ('joao_per@universidade.com', '33333333333'),
@@ -91,61 +91,58 @@ INSERT INTO email_professor (email, CPF) VALUES
 ('luiz@universidade.com', '99999999999');
 
 -- Especialização Professores
-INSERT INTO Professor_Substituto (CPF, data_fim_contrato) VALUES
+INSERT INTO professor_substituto (cpf, data_fim_contrato) VALUES
 ('11111111111', '2021-03-01'),
 ('22222222222', '2020-04-10'),
 ('33333333333', '2019-05-20');
 
-INSERT INTO Professor_Titular (CPF) VALUES
+INSERT INTO professor_titular (cpf) VALUES
 ('44444444444'), ('55555555555'), ('66666666666'),
 ('77777777777'), ('88888888888'), ('99999999999');
 
-INSERT INTO Coordenador (CPF) VALUES
-('44444444444'), ('55555555555'), ('66666666666');
+INSERT INTO coordenador (cpf, codigo, data_inicio, data_fim) VALUES
+('44444444444', 1, '2021-03-02', '2022-03-02'),
+('55555555555', 2, '2016-04-10', '2017-04-10'),
+('66666666666', 3, '2012-05-20', '2013-05-20');
 
 -- Inserção de Areas de Interesse
-INSERT INTO Area_Interesse (ID, nome) VALUES
+INSERT INTO area_interesse (id, nome) VALUES
 (1, 'Inteligencia Artificial'),
 (2, 'Otimização'),
 (3, 'Modelagem Matematica');
 
 -- Inserção de Disciplinas
-INSERT INTO Disciplina (codigo, nome, codigo_curso) VALUES 
+INSERT INTO disciplina (codigo, nome, codigo_curso) VALUES 
 ('ENG001', 'Banco de Dados', 1),
 ('BCC002', 'Estrutura de Dados', 2),
 ('MAT003', 'Calculo 3', 3);
 
 -- Inserção de Turmas e horarios
-INSERT INTO Turma (ID, data_inicio, codigo, CPF) VALUES 
+INSERT INTO turma (id, data_inicio, codigo, cpf) VALUES 
 (1, '2024-01-15', 'ENG001', '77777777777'),
 (2, '2024-02-10', 'BCC002', '88888888888'),
 (3, '2024-03-05', 'MAT003', '99999999999');
 
-INSERT INTO horarios (sala, dia, horario, ID) VALUES 
+INSERT INTO horarios (sala, dia, horario, id) VALUES 
 ('201', 1, 1, 1),
 ('202', 1, 1, 2),
 ('203', 1, 1, 3);
 
 -- Inserção de Avaliações
-INSERT INTO Avaliacao (ID, data_aplicacao, nota_maxima) VALUES 
+INSERT INTO avaliacao (id, data_aplicacao, nota_maxima) VALUES 
 (1, '2024-06-10', 4.0),
 (2, '2024-06-15', 3.0),
 (3, '2024-06-20', 6.0);
 
 -- Inserção de Relacionamentos
-INSERT INTO coordena (CPF, codigo, data_inicio, data_fim) VALUES
-('44444444444', 1, '2021-03-02', '2022-03-02'),
-('55555555555', 2, '2016-04-10', '2017-04-10'),
-('66666666666', 3, '2012-05-20', '2013-05-20');
-
-INSERT INTO area_do (ID, codigo) VALUES
+INSERT INTO area_do (id, codigo) VALUES
 (1, 1), (2, 2), (3, 3);
 
-INSERT INTO se_interessa (ID, CPF) VALUES
+INSERT INTO se_interessa (id, cpf) VALUES
 (1, '44444444444'), (2, '55555555555'), (3, '66666666666'),
 (1, '77777777777'), (2, '88888888888'), (3, '99999999999');
 
-INSERT INTO possui (n_matricula, ID, data_aplicacao, nota) VALUES
+INSERT INTO possui (n_matricula, id, data_aplicacao, nota) VALUES
 ('202300001', 1, '2024-06-10', 4.0),
 ('202300002', 2, '2024-06-15', 1.5),
 ('202300003', 3, '2024-06-20', 5.0),
@@ -156,13 +153,25 @@ INSERT INTO possui (n_matricula, ID, data_aplicacao, nota) VALUES
 ('202300008', 2, '2024-06-15', 2.0),
 ('202300009', 3, '2024-06-20', 2.0);
 
-INSERT INTO participa (n_matricula, ID, presenca, nota_total) VALUES
-('202300001', 1, 1.00, 4.0),
-('202300002', 2, 0.65, 1.5),
-('202300003', 3, 0.78, 5.0),
-('202300004', 1, 0.95, 3.0),
-('202300005', 2, 0.98, 3.0),
-('202300006', 3, 0.56, 6.0),
-('202300007', 1, 0.00, 1.0),
-('202300008', 2, 0.87, 2.0),
-('202300009', 3, 0.80, 2.0);
+INSERT INTO participa (n_matricula, id, presenca, nota_total) VALUES
+('202300001', 1, 1.20, 7.0),
+('202300002', 2, 5.50, 9.5),
+('202300003', 3, 7.80, 5.0),
+('202300004', 1, 9.50, 7.0),
+('202300005', 2, 9.80, 8.0),
+('202300006', 3, 2.56, 9.0),
+('202300007', 1, 0.00, 8.0),
+('202300008', 2, 8.70, 2.0),
+('202300009', 3, 8.00, 2.0);
+
+-- Atualizar sequência para a tabela 'curso'
+SELECT setval('curso_codigo_seq', COALESCE((SELECT MAX(codigo) FROM curso), 0) + 1, FALSE);
+
+-- Atualizar sequência para a tabela 'pessoa'
+SELECT setval('pessoa_id_seq', COALESCE((SELECT MAX(id) FROM pessoa), 0) + 1, FALSE);
+
+-- Atualizar sequência para a tabela 'area_Interesse'
+SELECT setval('area_interesse_id_seq', COALESCE((SELECT MAX(id) FROM area_Interesse), 0) + 1, FALSE);
+
+-- Atualizar sequência para a tabela 'turma'
+SELECT setval('turma_id_seq', COALESCE((SELECT MAX(id) FROM turma), 0) + 1, FALSE);

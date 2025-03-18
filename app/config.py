@@ -1,5 +1,5 @@
 postgresql_config = {
-    "HOST": "localhost",
+    "HOST": "db",
     "DATABASE": "TP_BD1",
     "USERNAME": "postgres",
     "PASSWORD": "1234",

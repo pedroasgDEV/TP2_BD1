@@ -1,106 +1,54 @@
-from app.utils.connectDB import PostgreSQL
+from flask import Blueprint, request, jsonify
+from app.models.disciplina import Disciplina
 
-class Users:
-    def __init__(self):
-        #connect the database 
-        self.__postgre = PostgreSQL()
-        
-        if not self.__table_check(): raise Exception("ERRO: Table not exists")
+disciplina_bp = Blueprint('disciplina_bp', __name__)
 
+# Criar uma Disciplina
+@disciplina_bp.route('/', methods=['POST'])
+def create_disciplina():
+    disciplina = Disciplina()
+    data = request.get_json()
     
-    #check if the table exists
-    def __table_check(self):
-        
-        sql = '''  
-            SELECT * 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public' 
-            AND table_name = 'users';
-        '''
-        
-        result = self.__postgre.consult(sql)
-        
-        if result is None or len(result) != 1: return False
-        else: return True
-        
-    #insert data from a json
-    def insert(self, doc):  
-        sql = f'''
-            INSERT INTO users 
-            (regis_id, name, email, passwrd, course)
-            VALUES 
-            ('{doc["regis_id"]}', '{doc["name"]}', '{doc["email"]}', '{doc["passwrd"]}', '{doc["course"]}');
-        '''
-        
-        return self.__postgre.execute(sql)
-        
-    #select by regis_id
-    def select(self, regis_id):
-        sql = f'''
-            SELECT * FROM users
-            WHERE regis_id = '{regis_id}';
-        '''
-        
-        result = self.__postgre.consult(sql)
-        
-        if result is None or len(result) < 1: return False
-        else: 
-            usr = {
-                "regis_id": result[0][0],
-                "name": result[0][1],
-                "email": result[0][2],
-                "passwrd": result[0][3],
-                "course": result[0][4]
-            }
-            
-            return usr
+    result = disciplina.insert(data)       
+    disciplina.close()
     
-    #update data
-    def update(self, regis_id, doc):
-        upd = ""
-        for index in doc:
-            upd += f"{index} = '{doc[index]}', "
-            
-        upd = upd[:-2]
-        
-        sql = f'''
-            UPDATE users
-            SET {upd}
-            WHERE regis_id = '{regis_id}';
-        '''
-        
-        return self.__postgre.execute(sql)
+    if result is None:
+        return jsonify({'message': 'Disciplina não criada'}), 400
+    return jsonify({'message': 'Disciplina criada', 'codigo': result}), 201
+
+# Obter todos
+@disciplina_bp.route('/', methods=['GET'])
+def get_disciplina():
+    disciplina = Disciplina()
     
-    #delet data
-    def delete(self, regis_id):
-        sql = f'''
-            DELETE FROM users
-            WHERE regis_id = '{regis_id}';
-        '''
-        
-        return self.__postgre.execute(sql)
+    result = disciplina.get_all()
+    disciplina.close()
+
+    if result is None:
+        return jsonify({'message': 'Disciplina não encontrada'}), 404
+    return jsonify(result), 200
+
+# Atualizar dados do disciplina
+@disciplina_bp.route('/<codigo>', methods=['PUT'])
+def update_disciplina(codigo):
+    disciplina = Disciplina()
+    data = request.get_json()
     
-    def login(self, doc):
-        sql = f'''
-            SELECT * FROM users
-            WHERE email = '{doc['email']}'
-            AND passwrd = '{doc['passwrd']}';
-        '''
-        
-        result = self.__postgre.consult(sql)
-            
-        if result is None or len(result) < 1: return False
-        else: 
-            usr = {
-                "regis_id": result[0][0],
-                "name": result[0][1],
-                "email": result[0][2],
-                "passwrd": result[0][3],
-                "course": result[0][4]
-            }
-            
-            return usr
+    result = disciplina.update(codigo, data)
+    disciplina.close()
     
-    #close db
-    def close(self):
-        self.__postgre.close()
+    if result:
+        return jsonify({'message': 'Disciplina atualizada'}), 204
+    return jsonify({'message': 'Disciplina não atualizada'}), 404
+
+# Deletar disciplina
+@disciplina_bp.route('/<codigo>', methods=['DELETE'])
+def delete_disciplina(codigo):
+    disciplina = Disciplina()
+    
+    result = disciplina.delete(codigo)
+    disciplina.close()
+    
+    if result:
+        return jsonify({'message': 'Disciplina deletada'}), 204
+    return jsonify({'message': 'Disciplina não encontrada'}), 403

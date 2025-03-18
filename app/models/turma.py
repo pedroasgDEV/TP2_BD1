@@ -1,6 +1,6 @@
 from app.utils.connectDB import PostgreSQL
 
-class UsrSub:
+class Turma:
     def __init__(self):
         #connect the database 
         self.__postgre = PostgreSQL()
@@ -12,105 +12,172 @@ class UsrSub:
     def __table_check(self):
         
         sql = '''  
-            SELECT * 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public' 
-            AND table_name = 'user_subjects';
+            SELECT COUNT(*) 
+            FROM information_schema.tables
+            WHERE table_schema = 'public'
+            AND table_name IN ('disciplina', 'turma', 'aluno', 'participa',
+             'horarios', 'professor');
         '''
         
         result = self.__postgre.consult(sql)
         
-        if result is None or len(result) < 1: return False
+        if result is None or result[0][0] != 6: return False
         else: return True
         
     #insert data from a json
-    def insert(self, user_id, subject_code):
-        sql = f'''
-            INSERT INTO user_subjects 
-            (user_id, subject_code)
-            VALUES 
-            ('{user_id}', '{subject_code}');
-        '''
-        
-        return self.__postgre.execute(sql)
-        
-    #Verify if the connection exists
-    def verify(self, user_id, subject_code):
-        sql = f'''
-            SELECT * FROM user_subjects
-            WHERE user_id = '{user_id}'
-            AND subject_code = '{subject_code}';
-        '''
-        
+    def insert(self, json):
+        try: 
+            #Insert Turma and get Turma's id
+            sql = f'''
+                    INSERT INTO turma 
+                    (data_inicio, codigo, cpf)
+                    VALUES 
+                    ('{json["data_inicio"]}', '{json["codigo"]}', '{json["cpf"]}')
+                    RETURNING id;
+                '''
+            turma_id = self.__postgre.execute(sql)[0][0]
+
+            #Insert each horario
+            for horario in json["horarios"]:
+                sql = f'''
+                        INSERT INTO horarios
+                        (sala, dia, horario, id)
+                        VALUES 
+                        ('{horario["sala"]}', {horario["dia"]}, {horario["horario"]}, {turma_id});
+                    '''
+                self.__postgre.execute(sql)
+            
+            #Insert each aluno
+            for aluno in json["alunos"]:
+                sql = f'''
+                        INSERT INTO participa
+                        (n_matricula, id, presenca, nota_total)
+                        VALUES ('{aluno["n_matricula"]}', {turma_id}, {aluno["presenca"]}, {aluno["nota_total"]});
+                    '''
+                self.__postgre.execute(sql)
+
+        except Exception as e:
+            print(e)
+            return None
+
+        self.__postgre.database.commit()
+        return turma_id
+
+    #Get all data
+    def get_all(self):
+        sql = """
+                SELECT
+                    t.id AS ID,
+                    t.codigo AS codigo_disciplina,
+                    t.data_inicio,
+                    jsonb_build_object(
+                        'CPF', pr.cpf,
+                        'nome', pr.nome
+                    ) AS professor,
+                    COALESCE(AVG(p.nota_total), 0) AS media_notas,
+                    COUNT(DISTINCT p.n_matricula) AS qnt_alunos
+                FROM turma t
+                LEFT JOIN professor pr ON pr.cpf = t.cpf
+                LEFT JOIN participa p ON p.id = t.id
+                GROUP BY t.id, t.codigo, t.data_inicio, pr.cpf, pr.nome;
+            """
+
         result = self.__postgre.consult(sql)
+        turmas = {"turmas":[]}
+
+        for row in result:
+            turma = {
+                "ID": row[0],
+                "codigo_disciplina": row[1],
+                "data_inicio": row[2].strftime("%Y-%m-%d"),
+                "professor": row[3], 
+                "media_notas": round(row[4], 2) if row[3] is not None else None,
+                "qnt_alunos": int(row[5])  
+            }
+            turmas["turmas"].append(turma)
+
+        return turmas
         
-        if result is None or len(result) < 1: return False
-        else: return True
+    #Update data
+    def update(self, turma_id, json):
+
+        update_fields = []
+
+        try:
+            #Update each field in json
+            if "data_inicio" in json:
+                update_fields.append(f"data_inicio = '{json["data_inicio"]}'")
+
+            if "codigo" in json:
+                update_fields.append(f"codigo = '{json["codigo"]}'")
+            
+            if "cpf" in json:
+                update_fields.append(f"cpf = '{json["cpf"]}'")
+            
+            if update_fields:
+                sql = f'''
+                    UPDATE turma
+                    SET {', '.join(update_fields)}
+                    WHERE id = '{turma_id}';
+                '''
+                self.__postgre.execute(sql)
+            
+            #Update each horario
+            if "horarios" in json:
+                sql = f'''
+                        DELETE FROM horarios
+                        WHERE id = '{turma_id}';
+                    '''
+                self.__postgre.execute(sql)
+
+                for horario in json["horarios"]:
+                    sql = f'''
+                            INSERT INTO horarios
+                            (sala, dia, horario, id)
+                            VALUES 
+                            ('{horario["sala"]}', {horario["dia"]}, {horario["horario"]}, {turma_id});
+                        '''
+                    self.__postgre.execute(sql)
+            
+            #Update each aluno
+            if "alunos" in json:
+                sql = f'''
+                        DELETE FROM participa
+                        WHERE id = '{turma_id}';
+                    '''
+                self.__postgre.execute(sql)
+
+                for aluno in json["alunos"]:
+                    sql = f'''
+                            INSERT INTO participa
+                            (n_matricula, id, presenca, nota_total)
+                            VALUES ('{aluno["n_matricula"]}', {turma_id}, {aluno["presenca"]}, {aluno["nota_total"]});
+                        '''
+                    self.__postgre.execute(sql)
         
-    #select all Admins
-    def select_all_users(self, subject_code):
-        sql = f'''
-            SELECT *
-            FROM users usr
-            JOIN user_subjects usrsub ON usr.regis_id = usrsub.user_id
-            WHERE usrsub.subject_code = '{subject_code}';
-        '''
+        except:
+            return False
         
-        results = self.__postgre.consult(sql)
-        usrs = []
+        self.__postgre.database.commit()
+        return True
         
-        if results is None or len(results) < 1: return False
-        else:
-            for result in results:
-                usr = {
-                    "regis_id": result[0],
-                    "name": result[1],
-                    "email": result[2],
-                    "passwrd": result[3],
-                    "course": result[4]
-                }
-                
-                usrs.append(usr)
-                
-            return usrs
-        
-    #select all Subjects
-    def select_all_subjects(self, user_id):
-        sql = f'''
-            SELECT *
-            FROM subjects sub
-            JOIN user_subjects usrsub ON sub.subject_code = usrsub.subject_code
-            WHERE usrsub.user_id = '{user_id}';
-        '''
-        
-        results = self.__postgre.consult(sql)
-        subs = []
-        
-        if results is None or len(results) < 1: return False
-        else:
-            for result in results:
-                sub = {
-                    "subject_code": result[0],
-                    "name": result[1],
-                    "professor": result[2],
-                    "derp": result[3]
-                }
-                
-                subs.append(sub)
-                
-            return subs
-    
     #delet data
-    def delete(self, user_id, subject_code):
-        sql = f'''
-            DELETE FROM user_subjects
-            WHERE user_id = '{user_id}'
-            AND subject_code = '{subject_code}';
-        '''
+    def delete(self, turma_id):
+
+        try:
+            #Delete Turma
+            sql = f'''
+                DELETE FROM turma
+                WHERE id = {turma_id};
+            '''
+            self.__postgre.execute(sql)
+        except Exception as e:
+            return False
         
-        if self.__postgre.execute(sql) is False: return False
-        else: return True
-    
+        self.__postgre.database.commit()
+        return True
+
     #close db
     def close(self):
         self.__postgre.close()
+    

@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+*.pyo
+.tp2_bd1/
+.env

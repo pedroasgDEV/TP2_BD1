@@ -1,11 +1,11 @@
 {
-    "nome": "Ciência da Computação",
+    "nome": "Analise e Desenvolvimento de Sistemas",
     "telefones": ["1111-1111", 
                   "2222-2222"],
     "emails": ["ccomp@universidade.com",
                "guilherme@universidade.com"],
     "coordenador": {
-        "cpf_prof_titular": "55555555555",
+        "cpf": "99999999999",
         "data_inicio": "2016-04-10",
         "data_fim": "2017-04-10"
     }

@@ -1,5 +1,5 @@
 {   
-    "disciplina": {
+    "disciplinas": {
         "codigo": "BCC321",
         "nome_curso": "Ciencia Da Computação",
         "nome": "Banco de Dados 1",

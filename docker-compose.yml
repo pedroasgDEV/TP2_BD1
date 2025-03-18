@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # Serviço PostgreSQL
+  db:
+    build:
+      context: ./postgresql  # Caminho para o diretório do PostgreSQL
+      dockerfile: Dockerfile  # Nome do Dockerfile dentro de postgresql/
+    ports:
+      - "5432:5432"  # Mapeia a porta 5432 para o localhost
+    networks:
+      - app-network
+
+  # Serviço Flask
+  app:
+    build:
+      context: ./app  # Caminho para o diretório da aplicação Flask
+      dockerfile: Dockerfile  # Nome do Dockerfile dentro de app/
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgres://postgres:1234@db:5432/TP_BD1  # URL de conexão com o DB
+    ports:
+      - "3030:3030"  # Mapeia a porta 3030 para o localhost
+    depends_on:
+      - db  # Garante que o PostgreSQL seja iniciado antes do Flask
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

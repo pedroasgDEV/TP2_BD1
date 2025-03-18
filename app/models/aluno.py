@@ -1,6 +1,6 @@
-from utils.connectDB import PostgreSQL
+from app.utils.connectDB import PostgreSQL
 
-class Aluino:
+class Aluno:
     def __init__(self):
         #connect the database 
         self.__postgre = PostgreSQL()
@@ -12,128 +12,232 @@ class Aluino:
     def __table_check(self):
         
         sql = '''  
-            SELECT * 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public' 
-            AND table_name = 'admins';
+            SELECT COUNT(*) 
+            FROM information_schema.tables
+            WHERE table_schema = 'public'
+            AND table_name IN ('curso', 'pessoa', 'aluno', 'telefone_aluno', 'email_aluno', 'participa', 'turma', 'disciplina');
         '''
         
         result = self.__postgre.consult(sql)
         
-        if result is None or len(result) < 1: return False
+        if result is None or result[0][0] != 8: return False
         else: return True
         
     #insert data from a json
-    def insert(self, doc):
-        sql = f'''
-            INSERT INTO admins 
-            (name, email, passwrd, derp)
-            VALUES 
-            ('{doc["name"]}', '{doc["email"]}', '{doc["passwrd"]}', '{doc["derp"]}');
-        '''
-        
-        if self.__postgre.execute(sql) is False: return False
+    def insert(self, json):
+        try: 
+            #Insert Pessoa and get pessoa's id
+            sql = f'''
+                    INSERT INTO pessoa 
+                    (codigo)
+                    VALUES 
+                    ('{json["curso"]}')
+                    RETURNING id;
+                '''
+            pessoa_id = self.__postgre.execute(sql)[0][0]
             
-        sql = f'''
-            SELECT id FROM admins WHERE email = '{doc['email']}';
-        '''
-        
-        result = self.__postgre.consult(sql)
-        return int(result[0][0])
-    
-    #select by id
-    def select(self, id):
-        sql = f'''
-            SELECT * FROM admins
-            WHERE id = {id};
-        '''
-        
-        result = self.__postgre.consult(sql)
-        
-        if result is None or len(result) < 1: return False
-        else:
-            adm = {
-                "id": int(result[0][0]),
-                "name": result[0][1],
-                "email": result[0][2],
-                "passwrd": result[0][3],
-                "derp": result[0][4]
-            }
+            #Insert Aluno
+            sql = f'''
+                    INSERT INTO aluno
+                    (n_matricula, nome, data_matricula, id) 
+                    VALUES
+                    ('{json["n_matricula"]}','{json["nome"]}','{json["data_matricula"]}','{pessoa_id}')
+                    RETURNING n_matricula;
+                '''
             
-            return adm
-        
-    #select all
-    def select_all(self):
-        sql = f'''
-            SELECT * FROM admins;
-        '''
-        
-        results = self.__postgre.consult(sql)
-        adms = []
-        
-        if results is None or len(results) < 1: return False
-        else:
-            for result in results:
-                adm = {
-                    "id": int(result[0]),
-                    "name": result[1],
-                    "email": result[2],
-                    "passwrd": result[3],
-                    "derp": result[4]
-                }
+            n_matricula = self.__postgre.execute(sql)[0][0]
+
+            #Insert each telefone and email
+            for telefone in json["telefones"]:
+                sql = f'''
+                        INSERT INTO telefone_aluno
+                        (numero, n_matricula)
+                        VALUES ('{telefone}', '{n_matricula}');
+                    '''
+                self.__postgre.execute(sql)
+            
+            for email in json["emails"]:
+                sql = f'''
+                        INSERT INTO email_aluno
+                        (email, n_matricula)
+                        VALUES ('{email}', '{n_matricula}');
+                    '''
+                self.__postgre.execute(sql)
+        except:
+            return None
+
+        self.__postgre.database.commit()
+        return n_matricula
+
+    #Read all data
+    def get_all(self):
+        sql = """
+            SELECT 
+                a.n_matricula, 
+                c.nome AS nome_curso, 
+                a.nome, 
+                a.data_matricula 
+            FROM aluno a
+            JOIN pessoa p ON a.id = p.id
+            JOIN curso c ON p.codigo = c.codigo;
+        """
+        alunos = self.__postgre.consult(sql)
+
+        if not alunos:
+            return None
+
+        alunos_json = {"alunos": []}
+
+        for aluno in alunos:
+            n_matricula = aluno[0]
+
+            # Média Nnotas 
+            sql = f"""
+                SELECT AVG(p.nota_total) AS media_notas
+                FROM participa p
+                WHERE p.n_matricula = '{n_matricula}'
+                GROUP BY p.n_matricula;
+            """
+            media_notas = self.__postgre.consult(sql)
+            media_notas = media_notas[0][0] if media_notas else 0
+
+            # Tempo de curso
+            sql = f"""
+                SELECT EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_matricula)) AS tempo_curso_anos
+                FROM aluno
+                WHERE n_matricula = '{n_matricula}';
+            """
+            tempo_curso = int(self.__postgre.consult(sql)[0][0])
+
+            # Disciplinas aprovadas
+            sql = f"""
+                SELECT d.codigo 
+                FROM participa p
+                JOIN turma t ON p.id = t.id
+                JOIN disciplina d ON t.codigo = d.codigo
+                WHERE p.n_matricula = '{n_matricula}'
+                AND p.nota_total >= 6.0
+                AND p.presenca >= 8.0;
+            """
+            disciplinas_aprovadas = [row[0] for row in self.__postgre.consult(sql)]
+
+            # Telefones do aluno
+            sql = f"""
+                SELECT numero 
+                FROM telefone_aluno
+                WHERE n_matricula = '{n_matricula}';
+            """
+            telefones = [row[0] for row in self.__postgre.consult(sql)]
+
+            # Emails do aluno
+            sql = f"""
+                SELECT email 
+                FROM email_aluno
+                WHERE n_matricula = '{n_matricula}';
+            """
+            emails = [row[0] for row in self.__postgre.consult(sql)]
+
+            alunos_json["alunos"].append({
+                "n_matricula": aluno[0],
+                "nome_curso": aluno[1],
+                "nome": aluno[2],
+                "data_matricula": aluno[3].strftime("%Y-%m-%d"),
+                "media_notas": media_notas,
+                "tempo_curso_anos": tempo_curso,
+                "disciplinas_aprovadas": disciplinas_aprovadas,
+                "telefones": telefones,
+                "emails": emails
+            })
+
+        return alunos_json
+
+    #Update data
+    def update(self, n_matricula, json):
+
+        update_fields = []
+
+        try:
+            #Update each field in json
+            if "nome" in json:
+                update_fields.append(f"nome = '{json["nome"]}'")
+
+            if "data_matricula" in json:
+                update_fields.append(f"data_matricula = '{json["data_matricula"]}'")
+            
+            if update_fields:
+                sql = f'''
+                    UPDATE aluno
+                    SET {', '.join(update_fields)}
+                    WHERE n_matricula = '{n_matricula}';
+                '''
+                self.__postgre.execute(sql)
+            
+            #Delete each telefone and email and inssert the new ones
+            if "telefones" in json:
                 
-                adms.append(adm)
+                sql = f'''
+                    DELETE FROM telefone_aluno
+                    WHERE n_matricula = '{n_matricula}';
+                '''
+
+                self.__postgre.execute(sql)
+
+                for telefone in json["telefones"]:
+                    sql = f'''
+                            INSERT INTO telefone_aluno
+                            (numero, n_matricula)
+                            VALUES ('{telefone}', '{n_matricula}');
+                        '''
+                    self.__postgre.execute(sql)
+
+            if "emails" in json:
                 
-            return adms
-    
-    #update data
-    def update(self, id, doc):
-        upd = ""
-        for index in doc:
-            upd += f"{index} = '{doc[index]}', "
-            
-        upd = upd[:-2]
+                sql = f'''
+                    DELETE FROM email_aluno
+                    WHERE n_matricula = '{n_matricula}';
+                '''
+
+                self.__postgre.execute(sql)
+
+                for email in json["emails"]:
+                    sql = f'''
+                            INSERT INTO email_aluno
+                            (email, n_matricula)
+                            VALUES ('{email}', '{n_matricula}');
+                        '''
+                    self.__postgre.execute(sql)
         
-        sql = f'''
-            UPDATE admins
-            SET {upd}
-            WHERE id = {id};
-        '''
+        except:
+            return False
         
-        if self.__postgre.execute(sql) is False: return False
-        else: return True
-    
+        self.__postgre.database.commit()
+        return True
+        
     #delet data
-    def delete(self, id):
-        sql = f'''
-            DELETE FROM admins
-            WHERE id = {id};
-        '''
-        
-        if self.__postgre.execute(sql) is False: return False
-        else: return True
-    
-    def login(self, doc):
-        sql = f'''
-            SELECT * FROM admins
-            WHERE email = '{doc['email']}'
-            AND passwrd = '{doc['passwrd']}';
-        '''
-        
-        result = self.__postgre.consult(sql)
+    def delete(self, n_matricula):
+
+        try:
+            #Get pessoa's id
+            sql = f'''
+                    SELECT id 
+                    FROM aluno 
+                    WHERE n_matricula = '{n_matricula}';
+                '''
+            pessoa_id = self.__postgre.execute(sql)[0][0]
             
-        if result is None or len(result) < 1: return False
-        else: 
-            adm = {
-                "id": result[0][0],
-                "name": result[0][1],
-                "email": result[0][2],
-                "passwrd": result[0][3],
-                "derp": result[0][4]
-            }
-            
-            return adm
-    
+            #Delete Pessoa
+            sql = f'''
+                DELETE FROM pessoa
+                WHERE id = {pessoa_id};
+            '''
+            self.__postgre.execute(sql)
+        except Exception as e:
+            return False
+        
+        self.__postgre.database.commit()
+        return True
+
     #close db
     def close(self):
         self.__postgre.close()
+    

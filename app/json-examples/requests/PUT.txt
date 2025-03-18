@@ -6,9 +6,9 @@ Qundo há listas, todo o conjunto anterior é excluido e o novo
 
 OS seguintes atributos não podem ser alterados:
 Curso: codigo
-Aluno: n_matricula, ID
-Professor: CPF, ID
-Areas: ID
+Aluno: n_matricula, id
+Professor: cpf, id
+Areas: id
 Disciplina: codigo
-Turma: ID
-Avaliacao: ID, data_aplicacao
+Turma: id
+Avaliacao: id, data_aplicacao

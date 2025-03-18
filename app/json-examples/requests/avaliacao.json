@@ -1,9 +1,9 @@
 {
-    "ID_turma": 1,
+    "id_turma": 1,
     "data_aplicacao": "2023-06-15",
     "nota_maxima": 10.0,
     "nota_alunos": [{
         "n_matricula": "202300001",
-        "nota": 4.0
+        "nota": 1.0
     }]
 }

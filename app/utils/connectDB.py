@@ -1,5 +1,5 @@
 import psycopg2
-from config import postgresql_config
+from app.config import postgresql_config
 
 class PostgreSQL:
     
@@ -31,13 +31,13 @@ class PostgreSQL:
         try:
             cursor = self.__conn.cursor()
             cursor.execute(sql)
-            cursor.close()
             self.__conn.commit()
+            resp = cursor.fetchall()
             
         except Exception as e:
-            return False
+            return e
         
-        return True
+        return resp
 
     #Consult some query and return the results of consult
     def consult(self, sql : str):
@@ -48,11 +48,12 @@ class PostgreSQL:
             cursor.execute(sql)
             resp = cursor.fetchall()
             
-        except:           
-            return None
+        except Exception as e:
+            print(e)           
+            return e
         
         return resp
     
-    #Close the connection
+    #Close the database
     def close(self):
         self.__conn.close()
