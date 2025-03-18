@@ -1,0 +1,16 @@
+{   
+    "disciplina": {
+        "codigo": "BCC321",
+        "nome": "Banco de Dados 1",
+        "codigo_curso": 2,
+        "media_notas": 7.0,
+        "professores": [{
+            "CPF": "22222222222",
+            "nome": "Dra. Fernanda Costa"
+        }],
+        "alunos_ultima_turma": [{
+            "n_matricula": "202300001",
+            "nome": "Maria Clara"
+        }]
+    }
+}

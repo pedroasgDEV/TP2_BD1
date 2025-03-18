@@ -1,0 +1,20 @@
+{   
+    "cursos": [{
+        "codigo": 2,
+        "nome": "Ciência da Computação",
+        "telefones": ["1111-1111", 
+                    "2222-2222"],
+        "emails": ["ccomp@universidade.com",
+                "guilherme@universidade.com"],
+        "qnt_aluno": 23,
+        "qnt_professores": 10,
+        "qnt_disciplinas": 3,
+        "qnt_areas": 7,
+        "coordenador": {
+            "cpf_prof_titular": "55555555555",
+            "nome": "Dr. Guilherme Neves",
+            "data_inicio": "2016-04-10",
+            "data_fim": "2017-04-10"
+        }
+    }]
+}

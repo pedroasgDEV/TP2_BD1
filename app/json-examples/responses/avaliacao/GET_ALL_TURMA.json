@@ -1,0 +1,11 @@
+{   
+    "avaliacoes": [{
+        "id_turma": 1,
+        "data_aplicacao": "2023-06-15",
+        "nota_maxima": 10.0,
+        "media": 7.5,
+        "qnt_acima_60pct": 8,
+        "maior_nota": 9.0,
+        "menor_nota": 2.0
+    }]
+}

@@ -1,0 +1,19 @@
+{
+    "data_inicio": "2024-01-15",
+    "codigo": "BCC002",
+    "cpf": "99999999999",
+    "horarios": [{
+        "sala": "201",
+        "dia": 1,
+        "horario": 2
+    }, {
+        "sala": "201",
+        "dia": 3,
+        "horario": 2
+    }],
+    "alunos": [{
+        "n_matricula": "202300001",
+        "presenca": 10.00,
+        "nota_total": 0.0
+    }]
+}

@@ -1,0 +1,32 @@
+{   
+    "turma": {
+        "ID": 1,
+        "data_inicio": "C2024-01-15",
+        "codigo": "BCC002",
+        "professor": {
+            "CPF": "99999999999",
+            "nome": "Dr. Luiz Henrrique"
+        },
+        "horarios": [{
+            "sala": "201",
+            "dia": 1,
+            "horario": 2
+        }, {
+            "sala": "201",
+            "dia": 3,
+            "horario": 2
+        }],
+        "alunos": [{
+            "n_matricula": "202300001",
+            "presenca": 1.00,
+            "nota_total": 4.0
+        }],
+        "media_notas": 8.9,
+        "qnt_alunos": 12,
+        "avaliacoes": [{
+            "data_aplicacao": "2024-06-10",
+            "nota_maxima": 10.0,
+            "media_notas": 9.5
+        }]
+    }
+}

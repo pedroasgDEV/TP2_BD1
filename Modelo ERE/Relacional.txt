@@ -25,11 +25,9 @@ Professor_Substituto(_cpf_, data_fim_contrato)
 Professor_Titular(_cpf_)
     Professor_Titular[_cpf_] ->P Professor[_cpf_]
 
-Coordenador(_cpf_)
+Coordenador(_cpf_, _codigo_, data_inicio, data_fim)
     Coordenador[_cpf_] ->P Professor_Titular[_cpf_]
-coordena(_cpf_, _codigo_, data_inicio, data_fim)
-    coordena[_cpf_] ->B Coordenador[_cpf_]
-    coordena[_codigo_] ->B Curso[_codigo_]
+    coordena[_codigo_] ->P Curso[_codigo_]
 
 Area_Interesse(_id_, nome, descrição)
 area_do(_id_, _codigo_)
@@ -40,7 +38,7 @@ se_interessa(_id_, _cpf_)
     se_interessa[_id_] ->P Area_Interesse[_id_]
 
 Diciplina(_codigo_, nome, codigo_curso)
-    Diciplina[codigo_curso] ->B Curso[_codigo_]
+    Diciplina[codigo_curso] ->P Curso[_codigo_]
 
 Turma(_id_, data_inicio, codigo, cpf)
     Turma[codigo] ->P Diciplina[_codigo_]
@@ -57,4 +55,4 @@ possui(_n_matricula_, _id_. _data_, nota)
 
 participa(_n_matricula_, _id_, presença, nota_total)
     participa[_n_matricula_] ->P Aluno[_n_matricula_]
-    participa[_id_] ->B Turma[_id_]
+    participa[_id_] ->P Turma[_id_]
